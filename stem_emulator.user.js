@@ -14,8 +14,6 @@
 (function() {
     'use strict';
 
-
-
     let mode = 'mp3';
     class MessageType{
         static ACK = 0;
@@ -50,9 +48,6 @@
         static GET_STATE_OF_CHARGE = 17;
     };
 
-
-
-
     class FakeUSBInTransferResult{
         constructor(data){
             this.status = "ok";
@@ -60,6 +55,13 @@
         }
     };
 
+    class FileDownloaderState{
+        static START = 0;
+        static HEADER = 1;
+        static BODY = 2;
+        static END = 3;
+        static FINISHED = 4;
+    };
 
     function createResponse(type, payload){
         const l = payload.length + 1;
@@ -69,7 +71,6 @@
     function jsonToUint8(j){
         return new Uint8Array([...new TextEncoder().encode(JSON.stringify(j)), 0]);//needs extra null byte because .slice is wrong and trims last byte
     }
-
 
     async function base64_arraybuffer (data) {
         // Use a FileReader to generate a base64 data URI
@@ -87,13 +88,7 @@
         return base64url;
     }
 
-    class FileDownloaderState{
-        static START = 0;
-        static HEADER = 1;
-        static BODY = 2;
-        static END = 3;
-        static FINISHED = 4;
-    };
+
 
 
     class FileDownloader{
@@ -488,9 +483,6 @@
         });
     }
 
-
-
-
     class FakeUSBOutTransferResult{
         constructor(bytesWritten){
             this.status = "ok";
@@ -527,7 +519,6 @@
 
     };
 
-
     function createFakeUSB(){
             return createProxy(new FakeUSB());
     }
@@ -544,7 +535,6 @@
     navigator.usb.requestDevice = (ignore) => {
         return new Promise((res, _) => { res(createFakeUSB()); } );
     };
-
 
     let oldFetch = fetch;
 
@@ -585,8 +575,6 @@
     if(!!window['safari']){
         window['safari'] = {};
     }
-
-
 
     window.chrome = {loadTimes:{}};
 
