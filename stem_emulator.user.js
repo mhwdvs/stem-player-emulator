@@ -577,6 +577,4 @@
     }
 
     window.chrome = {loadTimes:{}};
-
-    document.addEventListener('load', () => { }, false);
 })();
