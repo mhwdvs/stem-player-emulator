@@ -557,6 +557,8 @@
     function modeStr(){
         return 'Current mode: ' + mode;
     }
+
+    // Construct file type button
     const but = document.createElement('button');
     but.style.zIndex = 9999;
     but.innerHTML = modeStr();
