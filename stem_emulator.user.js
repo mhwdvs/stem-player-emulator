@@ -293,15 +293,6 @@
                                 serialNumber: e.sn
                                 */
 
-        generateValidSerialNumber(){
-
-            let res = '';
-            for(let i = 0; i<24; i++){
-                res += parseInt(Math.random()*10);
-            }
-            return res;
-        }
-
         getDeviceInfo(){
          return {
                         'appver': "1.0.1636",
