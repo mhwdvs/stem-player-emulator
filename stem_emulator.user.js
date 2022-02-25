@@ -105,14 +105,10 @@
 
 
         handleOut(data){
-console.log('out maquina');
             switch(data.type){
                 case MessageType.ACK:
                     this.state = (this.state == FileDownloaderState.START ? FileDownloaderState.HEADER : this.state == FileDownloaderState.HEADER ? FileDownloaderState.BODY : this.state == FileDownloaderState.BODY ? FileDownloaderState.END : FileDownloaderState.FINISHED);
                     break;
-                default:
-                    console.log('FUCKKKKKKK ' + data);
-                    console.dir(data);
             }
         }
 
@@ -128,7 +124,7 @@ console.log('out maquina');
                 case FileDownloaderState.END:
                     return createResponse(MessageType.ACK, new Uint8Array());
                 default:
-                    console.log('DOWNLOADER INVALID STATE ' + this.state);
+                    console.error('DOWNLOADER INVALID STATE ' + this.state);
             }
 
         }
@@ -153,12 +149,9 @@ console.log('out maquina');
         }
 
         addContent(content){
-
-
             this.content.set(content, this.written);
             this.written += content.length;
 
-            console.log('Content is at ' + this.written+'/'+this.size);
             if(this.written > this.size){
                 console.error('WENT OVERBOARD ' + this.written + ' yikes ' + this.size);
             }
@@ -275,14 +268,12 @@ console.log('out maquina');
         }
 
         handleOut(data){
-            //console.log('got this ' + data);
             let un = null;
             if(data.constructor.name == 'Uint8Array'){
                 un = this.unpackData(data);
             }
             else{
                 debugger;
-                console.dir(data);
             }
 
 
@@ -369,7 +360,7 @@ console.log('out maquina');
             }
 
             if(this.last == null){
-                console.log('not implemented');
+                console.error('not implemented');
             }
 
             switch(this.last.type){
@@ -381,13 +372,8 @@ console.log('out maquina');
                     const stems = [];
                     console.warn(this.albums);
                     Object.values(this.albums).forEach( (album) => {
-
-                        console.log('Processing album ' + album.name);
                         Object.values(album.tracks).forEach( (track) => {
-
-                            console.log('Processing track ' + [album.name,track.name].join());
                             Object.values(track.stems).forEach( (stem) => {
-                                console.log('Processing stem ' + [album.name,track.name, stem.number].join());
                                 stems.push(stem);
                             });
 
@@ -402,7 +388,6 @@ console.log('out maquina');
                 case MessageType.FILE_HEADER:
                     res = createResponse(MessageType.ACK, new Uint8Array());
                     const decoded = new TextDecoder().decode(this.last.payload).slice(0,-1);
-                    console.log(decoded);
                     const p = JSON.parse(decoded);
                     switch(p.type){
                         case 'album-config':
@@ -433,14 +418,13 @@ console.log('out maquina');
                         default:
                             this.fileHandler = null;
                             console.warn('need to handle file of type ' + p.type);
-                            console.dir(p);
                             break;
                     }
                     break;
                 case MessageType.FILE_BODY:
 
                     if(this.fileHandler == null){
-                        console.log('GOT BODY but have no handler');
+                        console.error('GOT BODY but have no handler');
                     }
                     else{
 
@@ -451,9 +435,6 @@ console.log('out maquina');
                         if(res.done == true){
                             this.fileHandler = null;
                             if(res.data != null){
-                                //console.warn('Will download now');
-                                console.dir(res);
-
 /*
                                 base64_arraybuffer(res.data).then( (data) => {
                                     const element = document.createElement('a');
@@ -499,12 +480,10 @@ console.log('out maquina');
                 else{
                     if(name == 'then') return obj;
                     if(name == 'buffer') return 'cona';
-                    console.log('read request to ' + name + ' property');
                     return null;
                 }
             },
             set: function(obj, name, value) {
-                console.log('write request to ' + name + ' property with ' + value + ' value');
             },
         });
     }
@@ -530,12 +509,10 @@ console.log('out maquina');
         }
 
         selectConfiguration(config){
-            //console.log(config);
             return emptyPromise();
         }
 
         claimInterface(interfaceNumber){
-            //console.log(interfaceNumber);
             return emptyPromise();
         }
 
@@ -545,7 +522,6 @@ console.log('out maquina');
         }
 
         transferIn(endpointNumber, length){
-            //console.log('reading ' + length);
             return new Promise((res, _) => { res(this.emulator.handleIn()); } );
         }
 
@@ -566,7 +542,6 @@ console.log('out maquina');
 
 
     navigator.usb.requestDevice = (ignore) => {
-        console.log('aqui');
         return new Promise((res, _) => { res(createFakeUSB()); } );
     };
 
@@ -574,13 +549,6 @@ console.log('out maquina');
     let oldFetch = fetch;
 
     function newFetch(){
-
-
-        for(let i = 0; i< arguments.length; i++){
-            console.dir(arguments[i]);
-            console.log(typeof(arguments[i]));
-        }
-
         let url = arguments[0];
         if(typeof(arguments[0]) == 'string' && mode == 'wav'){
            url = arguments[0].replace('codec=mp3', 'codec=wav');
@@ -622,5 +590,5 @@ console.log('out maquina');
 
     window.chrome = {loadTimes:{}};
 
-    document.addEventListener('load', () => { console.log('cona'); }, false);
+    document.addEventListener('load', () => { }, false);
 })();
